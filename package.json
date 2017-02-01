@@ -1,0 +1,41 @@
+{
+    "name": "functional-route-tester",
+    "version": "0.0.1",
+    "description": "Test your Restiq, Restify, Express, or web server framework by exercising routes functionally.",
+    "main": "lib/index.js",
+    "scripts": {
+        "test": "script/test",
+        "watch": "script/watch"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tests-always-included/functional-route-tester.git"
+    },
+    "keywords": [
+        "functional",
+        "test",
+        "middleware",
+        "server",
+        "createserver",
+        "restiq",
+        "restify",
+        "express"
+    ],
+    "author": "Tyler Akins <fidian@rumkin.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/tests-always-included/functional-route-tester/issues"
+    },
+    "homepage": "https://github.com/tests-always-included/functional-route-tester#readme",
+    "devDependencies": {
+        "codecov": "~1.0.1",
+        "eslint": "~3.13.1",
+        "istanbul": "~0.4.5",
+        "jasmine": "~2.5.2",
+        "restify": "~4.3.0",
+        "restiq": "~0.6.1"
+    },
+    "dependencies": {
+        "http-link-header": "~0.7.0"
+    }
+}

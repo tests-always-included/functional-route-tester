@@ -36,6 +36,7 @@
         "restiq": "~0.6.1"
     },
     "dependencies": {
-        "http-link-header": "~0.7.0"
+        "http-link-header": "~0.7.0",
+        "node-mocks-http": "~1.5.4"
     }
 }

@@ -3,7 +3,7 @@
 var debug, FunctionalTest;
 
 debug = require("debug")("restiq-functional-test");
-FunctionalTest = require("./functional-test.js");
+FunctionalTest = require("../lib/functional-test.js");
 
 
 /**

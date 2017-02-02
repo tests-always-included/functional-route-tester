@@ -3,7 +3,7 @@
 var debug, FunctionalTest;
 
 debug = require("debug")("restiq-functional-test");
-FunctionalTest = require("../lib/functional-test.js");
+FunctionalTest = require("..").FunctionalTest;
 
 
 /**
@@ -35,10 +35,7 @@ FunctionalTest = require("../lib/functional-test.js");
  *           // Here, the promise result is not what was returned above.
  *           // Instead, it is the functional test object.
  *           functionalTest = promiseResult;
- *
- *           // This is async, so call the "done" callback.
- *           done()
- *       });
+ *       }).then(done, done);
  *
  * It is suggested that you put this sort of code into a helper to tie
  * it into your app correctly.  A helper would also provide a convenient
@@ -64,7 +61,7 @@ jasmine.restiqFunctionalTestAsync = (initFunction) => {
      */
     function useRequestHandler(handler) {
         debug("Provided a request handler, making FunctionalTest");
-        functionalTest = new FunctionalTest(handler);
+        functionalTest = new FunctionalTest(handler, "restiq");
     }
 
     // If this is null after your initialization function, then the

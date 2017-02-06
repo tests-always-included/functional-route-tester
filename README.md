@@ -368,7 +368,7 @@ Converts a string into an object for easier use internally. This is a method to 
 Monkey patching has its own topic in this documentation.
 
 
-### `string = result.toString([colorize])`
+### `string = result.toString([colorize=true])`
 
 Make a textual representation of the request and response. This calls a series of functions to generate the full string. Each function's result will be appended together along with a generated header (based on the method name).
 

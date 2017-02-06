@@ -1,6 +1,6 @@
 "use strict";
 
-var restify, routes;
+var express, routes;
 
 /**
  * How to send a response to this framework.
@@ -10,26 +10,33 @@ var restify, routes;
  * @param {Object} headers
  * @param {*} body undefined is allowed
  */
-function sendToRestify(res, statusCode, headers, body) {
-    res.send(statusCode, body, headers);
+function sendToExpress(res, statusCode, headers, body) {
+    Object.keys(headers).forEach((headerKey) => {
+        res.append(headerKey, headers[headerKey]);
+    });
+    res.status(statusCode);
+    res.send(body);
 }
 
 
-restify = require("restify");
+express = require("express");
 routes = require("./fixture/routes");
 
-describe("restify", () => {
+describe("express", () => {
     var functionalTest;
 
     beforeEach(() => {
-        return jasmine.restifyFunctionalTestAsync(() => {
-            var app, config;
+        return jasmine.expressFunctionalTestAsync(() => {
+            var app;
 
-            config = {};
-            app = restify.createServer(config);
+            app = express();
             routes.forEach((routeInfo) => {
-                app[routeInfo.method.toLowerCase()](routeInfo.path, routeInfo.routeFactory(sendToRestify, "restify"));
+                app[routeInfo.method.toLowerCase()](routeInfo.path, routeInfo.routeFactory(sendToExpress, "express"));
             });
+
+            // Listen to port -1 because we shouldn't be allowed to do this
+            // if this was really listening.
+            app.listen(-1);
         }).then((theNewFunctionalTest) => {
             functionalTest = theNewFunctionalTest;
         });
@@ -37,7 +44,7 @@ describe("restify", () => {
     it("gets /", () => {
         return functionalTest.requestAsync("GET", "/").then((result) => {
             expect(result.statusCode).toBe(200);
-            expect(result.body).toBe("\"this works\"");
+            expect(result.body).toBe("this works");
         });
     });
     it("reflects with /reflect", () => {
@@ -48,7 +55,7 @@ describe("restify", () => {
                 Asleep: "no, just reflecting on the day, ignore the snoring"
             }
         }).then((result) => {
-            expect(result.body).toEqual("\"This is my body\"");
+            expect(result.body).toEqual("This is my body");
             expect(result.getHeader("content-type")).toEqual("anything I like");
             expect(result.getHeader("ASLEEP")).toEqual("no, just reflecting on the day, ignore the snoring");
         });
@@ -67,12 +74,14 @@ Host: localhost
 
 `);
             expect(chunks[3]).toMatch(/^ Response #[0-9]+ $/);
-            expect(chunks[4]).toEqual(`
+            expect(chunks[4].replace(/^ETag: .*$/m, "ETAG REMOVED")).toEqual(`
 200 OK
-Content-Type: text/plain
-Content-Length: 12
+X-Powered-By: Express
+Content-Type: text/plain; charset=utf-8
+Content-Length: 10
+ETAG REMOVED
 
-"this works"`);
+this works`);
             expect(chunks.length).toEqual(5);
         });
     });
@@ -95,14 +104,14 @@ Host: localhost
 
 `);
             expect(chunks[3]).toMatch(/^ Response #[0-9]+ $/);
-            expect(chunks[4]).toEqual(`
+            expect(chunks[4].replace(/^ETag: .*$/m, "ETAG REMOVED")).toEqual(`
 200 OK
-Content-Type: application/json
-Content-Length: 2
+X-Powered-By: Express
 link: </uri>; rel=x
 host: localhost
+Content-Type: application/json
 
-""
+{}
 `);
             expect(chunks[5]).toMatch(/^ Response Links #[0-9]+ $/);
             expect(chunks[6]).toEqual(`

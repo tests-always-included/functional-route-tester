@@ -1,6 +1,6 @@
 {
     "name": "functional-route-tester",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Test your Restiq, Restify, Express, or web server framework by exercising routes functionally.",
     "main": "lib/index.js",
     "scripts": {
@@ -30,6 +30,7 @@
     "devDependencies": {
         "codecov": "~1.0.1",
         "eslint": "~3.13.1",
+        "express": "~4.14.1",
         "istanbul": "~0.4.5",
         "jasmine": "~2.5.2",
         "jasmine-test-helpers": "~1.1.2",

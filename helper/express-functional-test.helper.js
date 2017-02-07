@@ -2,15 +2,15 @@
 
 var debug, FunctionalTest, http;
 
-debug = require("debug")("restify-functional-test");
+debug = require("debug")("express-functional-test");
 FunctionalTest = require("..").FunctionalTest;
 http = require("http");
 
 
 /**
- * Set up a functional test object using a Restify server.
+ * Set up a functional test object using an Express server.
  *
- * The function that is passed into restifyFunctionalTestAsync can return
+ * The function that is passed into expressFunctionalTestAsync can return
  * immediately or can return a Promise in case the setup is asynchronous.  The
  * returned value isn't used for anything. The initialization function can also
  * accept a node-style callback as the second parameter in order to signal
@@ -22,30 +22,16 @@ http = require("http");
  *
  *   beforeEach((done) => {
  *       // Create your server in here.
- *       jasmine.restifyFunctionalTestAsync(() => {
- *           var app, config;
+ *       jasmine.expressFunctionalTestAsync(() => {
+ *           var app;
  *
- *           // Set up your config object
- *           config = getMyConfiguration();
- *
- *           // Make sure we use http.
- *           [
- *               "cert",
- *               "certificate",
- *               "httpsServerOptions",
- *               "key",
- *               "spdy"
- *           ].forEach((key) => {
- *               if (config[key]) {
- *                   delete config[key];
- *               }
- *           });
- *
- *           app = restify.createServer(key);
+ *           app = express();
  *
  *           // Add your routes and middleware as you normally would.
- *           app.use(yourMiddleware);
  *           app.get("/the/path", yourRouteHandler);
+ *
+ *           // It is even safe for you to call .listen(), which is disabled.
+ *           app.listen(3000);
  *       }).then((promiseResult) => {
  *           // Here, the promise result is not what was returned above.
  *           // Instead, it is the functional test object.
@@ -60,11 +46,11 @@ http = require("http");
  * tests are able to return a promise and the test's completion is based
  * on that promise.  Far easier than remembering to call the `done` callback.
  *
- * @param {Function} initFunction Initializes restify for your app
+ * @param {Function} initFunction Initializes express for your app
  * @return {Promise.<FunctionalTest>}
  */
-jasmine.restifyFunctionalTestAsync = (initFunction) => {
-    var functionalTest, originalCreateServer;
+jasmine.expressFunctionalTestAsync = (initFunction) => {
+    var functionalTest;
 
 
     /**
@@ -89,43 +75,31 @@ jasmine.restifyFunctionalTestAsync = (initFunction) => {
 
 
     /**
-     * This is the replacement for http.createServer
+     * This is the replacement for http.createServer.  Returns a fake
+     * object that has a stubbed `.listen()` method.
      *
-     * Catch .on("request") and .listen().
-     *
+     * @param {Function} handler
      * @return {HttpServer}
      */
-    function createServerReplacement() {
-        var originalOn, server;
+    function createServerReplacement(handler) {
+        debug("Provided a request handler, making FunctionalTest");
+        functionalTest = new FunctionalTest(handler, "express");
 
-        server = originalCreateServer.call(http);
-
-        // Ignore calls to listen and simply call the callback immediately.
-        callFake(server, "listen", (port, callback) => {
-            if (callback) {
-                callback();
+        // Return a fake server object
+        return {
+            // Ignore calls to listen and simply call the callback immediately.
+            listen: (port, callback) => {
+                if (callback) {
+                    callback();
+                }
             }
-        });
-
-        // Catch calls to on("request") and make the FunctionalTest instance.
-        originalOn = server.on;
-        callFake(server, "on", (eventType, callback) => {
-            if (eventType === "request") {
-                debug("Provided a request handler, making FunctionalTest");
-                functionalTest = new FunctionalTest(callback, "restify");
-            } else {
-                originalOn.call(server, eventType, callback);
-            }
-        });
-
-        return server;
+        };
     }
 
-    originalCreateServer = http.createServer;
     callFake(http, "createServer", createServerReplacement);
 
     // If this is null after your initialization function, then the
-    // initialization function failed to start Restify correctly or did
+    // initialization function failed to start Express correctly or did
     // not compensate for asynchronous processes.
     functionalTest = null;
 

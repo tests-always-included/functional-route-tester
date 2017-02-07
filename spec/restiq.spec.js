@@ -31,7 +31,7 @@ describe("restiq", () => {
 
             app = restiq.createServer(config);
             routes.forEach((routeInfo) => {
-                app.addRoute(routeInfo.method, routeInfo.path, routeInfo.routeFactory(sendToRestiq));
+                app.addRoute(routeInfo.method, routeInfo.path, routeInfo.routeFactory(sendToRestiq, "restiq"));
             });
         }).then((theNewFunctionalTest) => {
             functionalTest = theNewFunctionalTest;

@@ -1,7 +1,7 @@
 Functional Route Tester
 =======================
 
-Test middleware functionally by simulating requests through the framework of your choice. Works with [Restiq] and [Restify], can be extended for others. Helper functions available for [Jasmine].
+Test middleware functionally by simulating requests through the framework of your choice. Works with [Restiq], [Restify], [Express] and can be extended for others. Helper functions available for [Jasmine].
 
 [![npm version][npm-badge]][npm-link]
 [![Build Status][travis-badge]][travis-link]
@@ -455,6 +455,7 @@ This software is licensed under a [MIT license][LICENSE] that contains additiona
 [dependencies-link]: https://david-dm.org/tests-always-included/functional-route-tester
 [devdependencies-badge]: https://img.shields.io/david/dev/tests-always-included/functional-route-tester.svg
 [devdependencies-link]: https://david-dm.org/tests-always-included/functional-route-tester#info=devDependencies
+[Express]: http://expressjs.com/
 [Jasmine]: https://jasmine.github.io/
 [jasmine-test-helpers]: https://github.com/tests-always-included/jasmine-test-helpers
 [LICENSE]: LICENSE.md

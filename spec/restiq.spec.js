@@ -15,15 +15,14 @@ function sendToRestiq(res, statusCode, headers, body) {
     res.end(body);
 }
 
-
 restiq = require("restiq");
 routes = require("./fixture/routes");
 describe("restiq", () => {
-    var functionalTest;
+    var app, functionalTest;
 
     beforeEach(() => {
         return jasmine.restiqFunctionalTestAsync((createServer) => {
-            var app, config;
+            var config;
 
             config = {
                 createServer
@@ -39,6 +38,19 @@ describe("restiq", () => {
     });
     it("gets /", () => {
         return functionalTest.requestAsync("GET", "/").then((result) => {
+            expect(result.statusCode).toBe(200);
+            expect(result.body).toBe("this works");
+        });
+    });
+    it("gets / with a body using restiq.mw.readBody", () => {
+        var params;
+
+        params = {
+            body: "Just saying hi"
+        };
+        app.addStep(restiq.mw.readBody);
+
+        return functionalTest.requestAsync("GET", "/", params).then((result) => {
             expect(result.statusCode).toBe(200);
             expect(result.body).toBe("this works");
         });

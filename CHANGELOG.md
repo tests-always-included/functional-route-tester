@@ -2,6 +2,18 @@ CHANGELOG
 =========
 
 
+1.0.3 - 2016-02-15
+------------------
+
+* Use `http.IncomingMessage` for Restiq in order to allow Restiq's body parser to work.
+
+
+1.0.2 - 2016-02-07
+------------------
+
+* Added full support for Express.
+
+
 1.0.1 - 2016-02-02
 ------------------
 

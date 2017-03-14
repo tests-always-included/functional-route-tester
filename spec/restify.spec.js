@@ -30,6 +30,11 @@ describe("restify", () => {
             routes.forEach((routeInfo) => {
                 app[routeInfo.method.toLowerCase()](routeInfo.path, routeInfo.routeFactory(sendToRestify, "restify"));
             });
+            app.get("/test", (req, res, next) => {
+                res.header("Content-Type", "text/plain");
+                res.send(200, "this works");
+                next();
+            });
         }).then((theNewFunctionalTest) => {
             functionalTest = theNewFunctionalTest;
         });
@@ -69,8 +74,8 @@ Host: localhost
             expect(chunks[3]).toMatch(/^ Response #[0-9]+ $/);
             expect(chunks[4]).toEqual(`
 200 OK
-Content-Type: text/plain
-Content-Length: 12
+content-type: text/plain
+content-length: 12
 
 "this works"`);
             expect(chunks.length).toEqual(5);
@@ -97,8 +102,8 @@ Host: localhost
             expect(chunks[3]).toMatch(/^ Response #[0-9]+ $/);
             expect(chunks[4]).toEqual(`
 200 OK
-Content-Type: application/json
-Content-Length: 2
+content-type: application/json
+content-length: 2
 link: </uri>; rel=x
 host: localhost
 
@@ -108,6 +113,37 @@ host: localhost
             expect(chunks[6]).toEqual(`
 x: </uri>; rel=x`);
             expect(chunks.length).toEqual(7);
+        });
+    });
+    it("ensures restify does not override Content-Type header", () => {
+        /**
+         * Note: if we do not delete res.setHeader and res.header Restify will
+         * default the Content-Type despite it already being set. This is
+         * due to the fact that we delete getHeader which causes it to fallback
+         * to http.OutgoingMessage.prototype.getHeader and will always
+         * return undefined unless we delete these functions that were added
+         * by the response mock.
+         */
+        return functionalTest.requestAsync("GET", "/test").then((result) => {
+            var chunks;
+
+            chunks = result.toString(false).split(/-----/);
+
+            expect(chunks[0]).toEqual("");
+            expect(chunks[1]).toMatch(/^ Request #[0-9]+ $/);
+            expect(chunks[2]).toEqual(`
+GET /test
+Host: localhost
+
+`);
+            expect(chunks[3]).toMatch(/^ Response #[0-9]+ $/);
+            expect(chunks[4]).toEqual(`
+200 OK
+content-type: text/plain
+content-length: 10
+
+this works`);
+            expect(chunks.length).toEqual(5);
         });
     });
 });

@@ -1,6 +1,6 @@
 {
     "name": "functional-route-tester",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Test your Restiq, Restify, Express, or web server framework by exercising routes functionally.",
     "main": "lib/index.js",
     "scripts": {

@@ -2,6 +2,12 @@ CHANGELOG
 =========
 
 
+1.0.5 - 2016-03-15
+------------------
+
+* Making more compatible with older versions of Node.
+
+
 1.0.4 - 2016-03-15
 ------------------
 

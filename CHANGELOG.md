@@ -2,6 +2,12 @@ CHANGELOG
 =========
 
 
+1.0.4 - 2016-03-15
+------------------
+
+* Fixing problems related to using Restify and the setting/getting of headers.
+
+
 1.0.3 - 2016-02-15
 ------------------
 
